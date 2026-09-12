@@ -6,7 +6,6 @@ profile={
     "name":"fresh",
     "content":"a passionate worker",
 }
-
 class ChatRequest(BaseModel):
     content: str
 
@@ -30,3 +29,6 @@ def post_chat(req: ChatRequest):
         "msg":"请求成功",
         "ans":ans,
     }
+
+# @app.post("/chunks")
+
