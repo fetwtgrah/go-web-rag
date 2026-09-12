@@ -1,0 +1,10 @@
+server:
+  port: :8080
+  mode: debug
+database:
+  host: localhost
+  port: 5432
+  password: 123456
+  dbname: gorag
+  user: postgres
+  sslmode: disable
