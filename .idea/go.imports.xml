@@ -3,6 +3,7 @@
   <component name="GoImports">
     <option name="excludedPackages">
       <array>
+        <option value="go-web-rag/go-server/model" />
         <option value="golang.org/x/net/context" />
       </array>
     </option>
