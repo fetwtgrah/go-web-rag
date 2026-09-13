@@ -1,4 +1,5 @@
 import ollama
+import spliter
 from fastapi import FastAPI
 from pydantic import BaseModel
 app=FastAPI()
@@ -30,5 +31,10 @@ def post_chat(req: ChatRequest):
         "ans":ans,
     }
 
-# @app.post("/chunks")
+@app.get("/chunks")
+def get_chunks():
+    result=spliter.split_md("test.md")
+    return {
+        "chunks":result
+    }
 

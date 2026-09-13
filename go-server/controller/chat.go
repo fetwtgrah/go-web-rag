@@ -40,3 +40,23 @@ func AddChat(c *gin.Context) {
 		"answer": result["ans"],
 	})
 }
+
+func GetAllChunks(c *gin.Context) {
+	resp, err := http.Get("http://localhost:8000/chunks")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	defer resp.Body.Close()
+	body, _ := io.ReadAll(resp.Body)
+	var result model.ChunkResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"total":  len(result.Chunks),
+		"chunks": result.Chunks,
+	})
+
+}
