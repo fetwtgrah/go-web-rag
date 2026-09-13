@@ -2,17 +2,12 @@ import ollama
 import spliter
 from fastapi import FastAPI
 from pydantic import BaseModel
+
 app=FastAPI()
-profile={
-    "name":"fresh",
-    "content":"a passionate worker",
-}
+
 class ChatRequest(BaseModel):
     content: str
 
-@app.get("/chat")
-def get_profile():
-    return profile
 @app.post("/chat")
 def post_chat(req: ChatRequest):
     question=req.content
@@ -31,10 +26,24 @@ def post_chat(req: ChatRequest):
         "ans":ans,
     }
 
-@app.get("/chunks")
-def get_chunks():
-    result=spliter.split_md("test.md")
-    return {
-        "chunks":result
-    }
+from qdrant_client import QdrantClient
+from qdrant_client.models import Distance, VectorParams
 
+client=QdrantClient(url="http://localhost:6333")
+client.recreate_collection(
+        collection_name="my_chunk",
+        vectors_config=VectorParams(size=1024, distance=Distance.COSINE)
+
+    )
+
+@app.post("/chunk/{path}")
+def before_question(path: str):
+   spliter.split_md(path)
+   return{
+       "msg":"成功存入"
+   }
+
+import reter
+@app.post("/ques")
+def after_question(req: ChatRequest):
+    result=reter.retrieve(req.content,6)

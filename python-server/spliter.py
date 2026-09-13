@@ -1,3 +1,6 @@
+import ollama
+from qdrant_client import QdrantClient
+from qdrant_client.models import PointStruct
 def split_md(path: str):
         with open(path, "r", encoding="utf-8") as f:
             text = f.read()
@@ -24,13 +27,27 @@ def split_md(path: str):
                       "chunk":chunk
                }
                result.append(item)
-        return result
-                    
-#用于测试split_md   
-# if __name__ == "__main__":
 
-#     result = split_md("test.md")
+        # embedding
+    
+        points=[]
+        for item in result:
+            response=ollama.embed(
+                          model="bge-m3",
+                          input=item["chunk"]
+                )
+            vector=(response["embeddings"][0])
 
-#     for item in result:
-#      print(item)
-#      print("\n")
+            points.append(
+                   PointStruct(
+                          id=item["id"],
+                          vector=vector,
+                          payload={"chunk":item["chunk"]}
+                   )
+            )
+
+        client=QdrantClient(url="http://localhost:6333")
+        client.upsert(
+               collection_name="my_chunk",
+               points=points
+        )

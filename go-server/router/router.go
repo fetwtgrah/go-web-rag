@@ -11,7 +11,8 @@ func StartRouter() *gin.Engine {
 	v1 := r.Group("/api/v1")
 	{
 		v1.POST("/chat", controller.AddChat)
-		v1.GET("/chunks", controller.GetAllChunks)
+		v1.POST("/chunk/:path", controller.GetAllChunks)
+		v1.POST("/qus", controller.DealQuestion)
 	}
 	return r
 }
