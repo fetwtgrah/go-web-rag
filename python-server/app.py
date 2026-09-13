@@ -46,4 +46,20 @@ def before_question(path: str):
 import reter
 @app.post("/ques")
 def after_question(req: ChatRequest):
-    result=reter.retrieve(req.content,6)
+    result=reter.retrieve(req.content,8,3)
+    context = "\n\n".join([c["chunk"] for c in result])
+    prompt = f"根据以下内容回答问题：\n\n{context}\n\n问题：{req.content}\n\n回答："
+    response=ollama.chat(
+        model="qwen2.5:7b",
+        messages=[
+            {
+                "role":"user",
+                "content":prompt
+            }
+        ]
+    )
+    ans=response["message"]["content"]
+    return{
+        "msg":"请求成功",
+        "ans":ans,
+    }

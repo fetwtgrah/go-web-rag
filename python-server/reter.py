@@ -2,7 +2,7 @@ from qdrant_client import QdrantClient
 import ollama
 from sentence_transformers import CrossEncoder
 reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")
-def retrieve(ques:str,top_n:int,top_k:int):
+def retrieve(ques: str,top_n:int,top_k:int):
     client=QdrantClient(url="http://localhost:6333")
     response=ollama.embed(model="bge-m3",input=ques)
     vector=response["embeddings"][0]
@@ -17,8 +17,8 @@ def retrieve(ques:str,top_n:int,top_k:int):
     for item in result.points:
         candidates.append({
             "id": item.id,
-            "chunk": item.payload["chunk"],  # 取出原文，不是整个payload
-            "score": item.score  # 顺便保留召回阶段的相似度分数，方便调试对比
+            "chunk": item.payload["chunk"],  
+            "score": item.score  
         })
 
     pairs = [[ques, c["chunk"]] for c in candidates]
